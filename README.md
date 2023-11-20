@@ -12,16 +12,16 @@ Star Citizen FileManager is a Python application built with Tkinter, designed to
 
 To use the Star Citizen FileManager, you need to have Python installed on your system. Clone or download this repository to get started.
 
-´´´Git clone the repository:´´´
-´´´git clone https://github.com/df8819/SCFileMover´´´
+'''Git clone the repository:'''
+'''git clone https://github.com/df8819/SCFileMover'''
 
 Navigate to the StarCitizenFileManager directory:
-´´´cd StarCitizenFileManager´´´
+'''cd StarCitizenFileManager'''
 
 ## Usage :wrench:
 
 Run the application by executing the main Python script:
-´´´python main.py´´´
+'''python main.py'''
 
 The GUI allows you to:
 
