@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import messagebox, ttk, filedialog, messagebox
 import shutil
 import os
 
@@ -8,7 +8,7 @@ class StarCitizenFileManager:
     def __init__(self, root):
         self.root = root
         self.default_path = "C:\\Program Files\\Roberts Space Industries\\StarCitizen"
-        self.versions = ["Live", "PTU", "EPTU", "Hotfix"]
+        self.versions = ["LIVE", "PTU", "EPTU", "HOTFIX"]
 
         # Setup the GUI
         self.setup_gui()
@@ -74,17 +74,19 @@ class StarCitizenFileManager:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
     def delete_files(self):
-        folder = os.path.join(self.default_path, self.delete_var.get())
-        try:
-            for filename in os.listdir(folder):
-                file_path = os.path.join(folder, filename)
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            messagebox.showinfo("Success", "Files deleted successfully.")
-        except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {e}")
+        # Confirmation dialog
+        if messagebox.askyesno("Confirm", "Really want to delete ALL files in the selected folder?"):
+            folder = os.path.join(self.default_path, self.delete_var.get())
+            try:
+                for filename in os.listdir(folder):
+                    file_path = os.path.join(folder, filename)
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                messagebox.showinfo("Success", "Files deleted successfully.")
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
 
 
 # Create the main window
