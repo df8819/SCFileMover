@@ -1,3 +1,4 @@
+import json
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog, messagebox
 import shutil
@@ -7,7 +8,8 @@ import os
 class StarCitizenFileManager:
     def __init__(self, root):
         self.root = root
-        self.default_path = "C:\\Program Files\\Roberts Space Industries\\StarCitizen"
+        self.config_file = os.path.join(os.path.expanduser('~'), 'Documents', 'StarCitizenFileManagerConfig.json')
+        self.default_path = self.load_config()
         self.versions = ["LIVE", "PTU", "EPTU", "HOTFIX"]
 
         # Setup the GUI
@@ -49,11 +51,24 @@ class StarCitizenFileManager:
 
         tk.Button(self.root, text="Change Path", command=self.change_path).grid(row=5, column=2)
 
+    def load_config(self):
+        if os.path.exists(self.config_file):
+            with open(self.config_file, 'r') as file:
+                config = json.load(file)
+                return config.get('default_path', "C:\\Program Files\\Roberts Space Industries\\StarCitizen")
+        else:
+            return "C:\\Program Files\\Roberts Space Industries\\StarCitizen"
+
+    def save_config(self):
+        with open(self.config_file, 'w') as file:
+            json.dump({'default_path': self.default_path}, file)
+
     def change_path(self):
         new_path = filedialog.askdirectory(initialdir=self.default_path)
         if new_path:
             self.default_path = new_path
             self.path_label.config(text=self.default_path)
+            self.save_config()
 
     def move_files(self):
         src = os.path.join(self.default_path, self.move_from_var.get())
