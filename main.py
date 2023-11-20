@@ -18,6 +18,21 @@ class StarCitizenFileManager:
     def setup_gui(self):
         self.root.title("Star Citizen File Manager")
 
+        # Get screen width and height
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+
+        # Set the window size
+        window_width = 320  # Adjust the size as needed
+        window_height = 240  # Adjust the size as needed
+
+        # Calculate x and y coordinates for the Tk root window
+        x = (screen_width // 2) - (window_width // 2)
+        y = (screen_height // 2) - (window_height // 2)
+
+        # Set the window's dimensions and position
+        self.root.geometry(f'{window_width}x{window_height}+{x}+{y}')
+
         # Move from and to
         tk.Label(self.root, text="Move From:").grid(row=0, column=0, sticky="w")
         self.move_from_var = tk.StringVar(self.root)
@@ -52,12 +67,24 @@ class StarCitizenFileManager:
         tk.Button(self.root, text="Change Path", command=self.change_path).grid(row=5, column=2)
 
     def load_config(self):
+        # Check if config file exists
         if os.path.exists(self.config_file):
             with open(self.config_file, 'r') as file:
                 config = json.load(file)
-                return config.get('default_path', "C:\\Program Files\\Roberts Space Industries\\StarCitizen")
+                # Use the default path from config if available
+                default_path = config.get('default_path', "C:\\Program Files\\Roberts Space Industries\\StarCitizen")
         else:
-            return "C:\\Program Files\\Roberts Space Industries\\StarCitizen"
+            default_path = "C:\\Program Files\\Roberts Space Industries\\StarCitizen"
+
+        # Check if the default path exists, otherwise prompt user with file dialog
+        if not os.path.exists(default_path):
+            root = tk.Tk()
+            root.withdraw()  # we don't want a full GUI, so keep the root window from appearing
+            print("The default path does not exist. Please select a new path.")
+            default_path = filedialog.askdirectory()  # show an "Open" dialog box and return the path to the selected folder
+            root.destroy()
+
+        return default_path
 
     def save_config(self):
         with open(self.config_file, 'w') as file:
