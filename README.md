@@ -1,6 +1,6 @@
-# Star Citizen FileManager :rocket:
+# Star Citizen FileMover :rocket:
 
-Star Citizen FileManager is a Python application built with Tkinter, designed to manage game files for Star Citizen. It provides a simple and intuitive GUI to change the installation path, move files between different versions, and delete files within the game directories. :video_game:
+Star Citizen FileMover is a Python application built with Tkinter, designed to manage game files for Star Citizen. It provides a simple and intuitive GUI to change the installation path, move files between different versions, and delete files within the game directories. :video_game:
 
 ## Features :sparkles:
 
@@ -10,15 +10,15 @@ Star Citizen FileManager is a Python application built with Tkinter, designed to
 
 ## Installation :computer:
 
-To use the Star Citizen FileManager, you need to have Python installed on your system. Clone or download this repository to get started.
+To use the Star Citizen FileMover, you need to have Python installed on your system. Clone or download this repository to get started.
 
 Git clone the repository:
 
 ```git clone https://github.com/df8819/SCFileMover```
 
-Navigate to the StarCitizenFileManager directory:
+Navigate to the SCFileMover directory:
 
-```cd StarCitizenFileManager```
+```cd SCFileMover```
 
 ## Usage :wrench:
 
