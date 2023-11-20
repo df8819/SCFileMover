@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import ttk, filedialog, messagebox
 import shutil
 import os
 
@@ -16,32 +16,38 @@ class StarCitizenFileManager:
     def setup_gui(self):
         self.root.title("Star Citizen File Manager")
 
-        # Path display and change button
-        tk.Label(self.root, text="Installation Path:").grid(row=0, column=0, sticky="w")
-        self.path_label = tk.Label(self.root, text=self.default_path, fg="blue")
-        self.path_label.grid(row=0, column=1, columnspan=2, sticky="w")
-        tk.Button(self.root, text="Change Path", command=self.change_path).grid(row=0, column=3)
-
         # Move from and to
-        tk.Label(self.root, text="Move From:").grid(row=1, column=0, sticky="w")
+        tk.Label(self.root, text="Move From:").grid(row=0, column=0, sticky="w")
         self.move_from_var = tk.StringVar(self.root)
         self.move_from_var.set(self.versions[0])
-        tk.OptionMenu(self.root, self.move_from_var, *self.versions).grid(row=1, column=1)
+        tk.OptionMenu(self.root, self.move_from_var, *self.versions).grid(row=0, column=1)
 
-        tk.Label(self.root, text="Move To:").grid(row=1, column=2, sticky="w")
+        tk.Label(self.root, text="Move To:").grid(row=1, column=0, sticky="w")
         self.move_to_var = tk.StringVar(self.root)
         self.move_to_var.set(self.versions[1])
-        tk.OptionMenu(self.root, self.move_to_var, *self.versions).grid(row=1, column=3)
+        tk.OptionMenu(self.root, self.move_to_var, *self.versions).grid(row=1, column=1)
 
-        tk.Button(self.root, text="Move Files", command=self.move_files, bg="green", fg="white").grid(row=2, column=3)
+        tk.Button(self.root, text="Move Files", command=self.move_files, bg="green", fg="white").grid(row=0, column=2)
+
+        ttk.Separator(self.root, orient='horizontal').grid(row=2, pady=20, sticky="ew", columnspan=3)
+
+        ttk.Separator(self.root, orient='horizontal').grid(row=4, pady=20, sticky="ew", columnspan=3)
 
         # Delete section
-        tk.Label(self.root, text="Delete Files in:").grid(row=2, column=0, sticky="w")
+        tk.Label(self.root, text="Delete Files in:").grid(row=3, column=0, sticky="w")
         self.delete_var = tk.StringVar(self.root)
         self.delete_var.set(self.versions[0])
-        tk.OptionMenu(self.root, self.delete_var, *self.versions).grid(row=2, column=1)
+        tk.OptionMenu(self.root, self.delete_var, *self.versions).grid(row=3, column=1)
 
-        tk.Button(self.root, text="Delete Files", command=self.delete_files, bg="red", fg="white").grid(row=2, column=2)
+        tk.Button(self.root, text="Delete Files", command=self.delete_files, bg="red", fg="white").grid(row=3, column=2)
+
+        # Path display and change button
+        tk.Label(self.root, text="Installation Path:").grid(row=5, column=0, sticky="w")
+
+        self.path_label = tk.Label(self.root, text=self.default_path, fg="blue")
+        self.path_label.grid(row=7, column=0, columnspan=3, padx=10)
+
+        tk.Button(self.root, text="Change Path", command=self.change_path).grid(row=5, column=2)
 
     def change_path(self):
         new_path = filedialog.askdirectory(initialdir=self.default_path)
