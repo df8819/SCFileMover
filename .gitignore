@@ -33,3 +33,8 @@ build/main/Analysis-00.toc
 .gitattributes
 SCFileMover.zip
 SCFileMover.exe
+.idea/vcs.xml
+.idea/SCFileMover.iml
+.idea/misc.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/inspectionProfiles/profiles_settings.xml

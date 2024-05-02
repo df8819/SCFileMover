@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk, filedialog, messagebox
 import shutil
 import os
+import ctypes
 
 
 class StarCitizenFileManager:
@@ -14,6 +15,13 @@ class StarCitizenFileManager:
 
         # Setup the GUI
         self.setup_gui()
+
+    @staticmethod
+    def is_admin():
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
 
     def setup_gui(self):
         self.root.title("Star Citizen File Manager")
@@ -34,24 +42,25 @@ class StarCitizenFileManager:
         self.root.geometry(f'{window_width}x{window_height}+{x}+{y}')
 
         # Move from and to
-        tk.Label(self.root, text="Move From:").grid(row=0, column=0, sticky="w")
+        tk.Label(self.root, text="Move From:").grid(padx=10, pady=15, row=0, column=0, sticky="w")
         self.move_from_var = tk.StringVar(self.root)
         self.move_from_var.set(self.versions[0])
         tk.OptionMenu(self.root, self.move_from_var, *self.versions).grid(row=0, column=1)
 
-        tk.Label(self.root, text="Move To:").grid(row=1, column=0, sticky="w")
+        tk.Label(self.root, text="Move To:").grid(padx=10, row=1, column=0, sticky="w")
         self.move_to_var = tk.StringVar(self.root)
         self.move_to_var.set(self.versions[1])
         tk.OptionMenu(self.root, self.move_to_var, *self.versions).grid(row=1, column=1)
 
-        tk.Button(self.root, text="Move Files", command=self.move_files, bg="green", fg="white").grid(row=0, column=2)
+        tk.Button(self.root, text="Move Files", command=self.move_files, bg="green", fg="white").grid(row=1, column=2)
 
-        ttk.Separator(self.root, orient='horizontal').grid(row=2, pady=20, sticky="ew", columnspan=3)
+        ttk.Separator(self.root, orient='horizontal').grid(padx=2, row=2, pady=10, sticky="ew", columnspan=3)
+        ttk.Separator(self.root, orient='horizontal').grid(padx=2, row=4, pady=10, sticky="ew", columnspan=3)
+        ttk.Separator(self.root, orient='horizontal').grid(padx=2, row=6, pady=10, sticky="ew", columnspan=3)
 
-        ttk.Separator(self.root, orient='horizontal').grid(row=4, pady=20, sticky="ew", columnspan=3)
 
         # Delete section
-        tk.Label(self.root, text="Delete Files in:").grid(row=3, column=0, sticky="w")
+        tk.Label(self.root, text="Delete Files in:").grid(padx=10, row=3, column=0, sticky="w")
         self.delete_var = tk.StringVar(self.root)
         self.delete_var.set(self.versions[0])
         tk.OptionMenu(self.root, self.delete_var, *self.versions).grid(row=3, column=1)
@@ -59,12 +68,15 @@ class StarCitizenFileManager:
         tk.Button(self.root, text="Delete Files", command=self.delete_files, bg="red", fg="white").grid(row=3, column=2)
 
         # Path display and change button
-        tk.Label(self.root, text="Installation Path:").grid(row=5, column=0, sticky="w")
+        tk.Label(self.root, text="Installation Path:").grid(padx=10, row=5, column=0, sticky="w")
 
         self.path_label = tk.Label(self.root, text=self.default_path, fg="blue")
         self.path_label.grid(row=7, column=0, columnspan=3, padx=10)
 
         tk.Button(self.root, text="Change Path", command=self.change_path).grid(row=5, column=2)
+        tk.Button(self.root, text="Open Directory", command=self.open_installation_directory).grid(row=5, column=1, sticky="w")
+
+        self.find_largest_folder()  # Pre-select the largest folder
 
     def load_config(self):
         # Check if config file exists
@@ -97,7 +109,28 @@ class StarCitizenFileManager:
             self.path_label.config(text=self.default_path)
             self.save_config()
 
+    def find_largest_folder(self):
+        sizes = {}
+        for version in self.versions:
+            folder_path = os.path.join(self.default_path, version)
+            total_size = 0
+            for dirpath, dirnames, filenames in os.walk(folder_path):
+                for f in filenames:
+                    fp = os.path.join(dirpath, f)
+                    # skip if it is symbolic link
+                    if not os.path.islink(fp):
+                        total_size += os.path.getsize(fp)
+            sizes[version] = total_size
+        largest_folder = max(sizes, key=sizes.get)
+        self.move_from_var.set(largest_folder)
+
     def move_files(self):
+        if not self.is_admin():
+            # Code to re-run the script with admin rights would go here
+            messagebox.showwarning("Insufficient Rights",
+                                   "Please run the application as administrator to perform this action.")
+            return
+
         src = os.path.join(self.default_path, self.move_from_var.get())
         dst = os.path.join(self.default_path, self.move_to_var.get())
 
@@ -116,9 +149,13 @@ class StarCitizenFileManager:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
     def delete_files(self):
-        # Confirmation dialog
-        if messagebox.askyesno("Confirm", "Really want to delete ALL files in the selected folder?"):
-            folder = os.path.join(self.default_path, self.delete_var.get())
+        if not self.is_admin():
+            messagebox.showwarning("Insufficient Rights",
+                                   "Please run the application as administrator to perform this action.")
+            return
+
+        folder = os.path.join(self.default_path, self.delete_var.get())
+        if messagebox.askyesno("Confirm", f"Really want to delete ALL files in: {self.delete_var.get()}?"):
             try:
                 for filename in os.listdir(folder):
                     file_path = os.path.join(folder, filename)
@@ -129,6 +166,10 @@ class StarCitizenFileManager:
                 messagebox.showinfo("Success", "Files deleted successfully.")
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred: {e}")
+
+    def open_installation_directory(self):
+        path = os.path.realpath(self.default_path)
+        os.startfile(path)
 
 
 # Create the main window
