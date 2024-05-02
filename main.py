@@ -5,6 +5,8 @@ import shutil
 import os
 import ctypes
 
+VERSION = 1.1
+
 
 class StarCitizenFileManager:
     def __init__(self, root):
