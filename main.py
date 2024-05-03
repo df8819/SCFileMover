@@ -60,7 +60,6 @@ class StarCitizenFileManager:
         ttk.Separator(self.root, orient='horizontal').grid(padx=2, row=4, pady=10, sticky="ew", columnspan=3)
         ttk.Separator(self.root, orient='horizontal').grid(padx=2, row=6, pady=10, sticky="ew", columnspan=3)
 
-
         # Delete section
         tk.Label(self.root, text="Delete Files in:").grid(padx=10, row=3, column=0, sticky="w")
         self.delete_var = tk.StringVar(self.root)
